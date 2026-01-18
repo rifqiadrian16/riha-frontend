@@ -1,19 +1,22 @@
-// src/services/api.js
 import axios from "axios";
 
-// Buat instance axios yang mengarah ke backend Anda
+// [PERBAIKAN DISINI]
+// Kita cek: Apakah ada VITE_API_URL dari Vercel?
+// Jika ADA, pakai link Ngrok itu.
+// Jika TIDAK ADA (di laptop), pakai localhost.
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // Sesuaikan dengan port backend Anda
+  baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// INTERCEPTOR (PENTING!)
-// Ini tugasnya otomatis menyelipkan Token di setiap request jika user sudah login
+// INTERCEPTOR (Tetap sama seperti sebelumnya)
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token"); // Kita akan simpan token di sini nanti
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers["x-auth-token"] = token;
     }
@@ -21,7 +24,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
