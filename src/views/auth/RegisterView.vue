@@ -195,6 +195,7 @@ const handleRegister = async () => {
               <div class="group">
                 <input
                   type="date"
+                  placeholder="Tanggal Lahir"
                   v-model="birthDate"
                   class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-700 text-base lg:text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
                 />
