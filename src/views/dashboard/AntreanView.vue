@@ -72,7 +72,16 @@ onMounted(() => {
   fetchRiwayat();
   fetchRujukan();
 
-  socket = io("http://localhost:5000");
+  const envUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  // Hapus '/api' di belakang URL (karena Socket.io harus connect ke Root, bukan ke /api)
+  const socketUrl = envUrl.replace("/api", "");
+
+  // Inisialisasi Socket dengan URL Dinamis
+  socket = io(socketUrl, {
+    transports: ["websocket", "polling"], // Wajib ada agar stabil di Ngrok/Mobile
+    withCredentials: true,
+  });
 
   socket.on("queue_updated", (data) => {
     console.log("Real-time update:", data.msg);

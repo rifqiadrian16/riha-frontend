@@ -4,7 +4,7 @@ import { io } from "socket.io-client"; // Import Socket
 import { useRouter, RouterLink } from "vue-router";
 import api from "../services/api"; // Sesuaikan path jika perlu (biasanya ../services/api)
 import { showAlert, showConfirm } from "../utils/alert"; // Sesuaikan path
-
+let socket = null;
 // Menerima Props dari Parent (Halaman Utama) untuk kontrol Mobile Menu
 const props = defineProps({
   isOpen: {
@@ -19,7 +19,6 @@ const emit = defineEmits(["close"]);
 const router = useRouter();
 const userRole = ref("");
 const unreadCount = ref(0);
-let socket = null;
 
 // --- LOGIKA NOTIFIKASI & ROLE ---
 const checkUnread = async () => {
@@ -40,7 +39,16 @@ onMounted(() => {
   // Cek Notifikasi Pertama Kali
   checkUnread();
 
-  socket = io("http://localhost:5000");
+  const envUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  // Hapus '/api' di belakang URL (karena Socket.io harus connect ke Root, bukan ke /api)
+  const socketUrl = envUrl.replace("/api", "");
+
+  // Inisialisasi Socket dengan URL Dinamis
+  socket = io(socketUrl, {
+    transports: ["websocket", "polling"], // Wajib ada agar stabil di Ngrok/Mobile
+    withCredentials: true,
+  });
 
   socket.on("referral_updated", () => {
     console.log("Notifikasi baru diterima via Socket!");
