@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Menyembunyikan ikon mata bawaan browser (Chrome, Edge, Safari) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+input[type="password"]::-webkit-password-reveal-button,
+input[type="password"]::-webkit-password-reveal-button-reverse {
+    display: none !important;
+    -webkit-appearance: none;
+}
