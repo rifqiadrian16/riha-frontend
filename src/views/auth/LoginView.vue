@@ -210,7 +210,7 @@ const handleLogin = async () => {
             </div>
           </form>
 
-          <div class="mt-4 relative flex py-2 items-center">
+          <!-- <div class="mt-4 relative flex py-2 items-center">
             <div class="flex-grow border-t border-gray-300"></div>
             <span class="flex-shrink-0 mx-4 text-gray-500 text-xs"
               >Atau Login Dengan</span
@@ -250,7 +250,7 @@ const handleLogin = async () => {
                 />
               </svg>
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
