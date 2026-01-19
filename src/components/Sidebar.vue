@@ -36,11 +36,11 @@ onMounted(() => {
   const role = localStorage.getItem("role");
   if (role) userRole.value = role;
 
-  // Cek Notifikasi Pertama Kali
   checkUnread();
 
   const envUrl =
-    import.meta.env.VITE_API_URL || "riha-backend-production.up.railway.app";
+    import.meta.env.VITE_API_URL ||
+    "https://riha-backend-production.up.railway.app";
 
   const socketUrl = envUrl.replace("/api", "");
 
@@ -51,8 +51,11 @@ onMounted(() => {
   });
 
   socket.on("referral_updated", () => {
-    console.log("Notifikasi baru diterima via Socket!");
-    checkUnread(); // Update angka hanya saat server memberi tahu
+    console.log("🔔 TING! Ada rujukan baru masuk via Socket!");
+
+    unreadCount.value += 1;
+
+    checkUnread();
   });
 });
 
