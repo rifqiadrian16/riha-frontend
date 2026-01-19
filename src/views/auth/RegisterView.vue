@@ -192,16 +192,21 @@ const handleRegister = async () => {
                   class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-700 text-base lg:text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
                 />
               </div>
-              <div class="group">
+              <div class="relative group">
                 <input
+                  type="date"
                   v-model="birthDate"
-                  placeholder="Tanggal Lahir"
-                  :type="birthDate ? 'date' : 'text'"
-                  onfocus="this.type = 'date'"
-                  onblur="if (!this.value) this.type = 'text';"
-                  class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-base lg:text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all shadow-sm appearance-none"
-                  :class="!birthDate ? 'text-gray-500' : 'text-gray-700'"
+                  required
+                  class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-base lg:text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all shadow-sm appearance-none relative z-10"
+                  :class="!birthDate ? 'text-transparent' : 'text-gray-700'"
                 />
+
+                <span
+                  v-if="!birthDate"
+                  class="absolute left-4 top-3 text-gray-500 text-base lg:text-sm pointer-events-none z-0"
+                >
+                  Tanggal Lahir
+                </span>
               </div>
 
               <div class="group relative">
