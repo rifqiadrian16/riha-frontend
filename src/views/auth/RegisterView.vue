@@ -194,10 +194,13 @@ const handleRegister = async () => {
               </div>
               <div class="group">
                 <input
-                  type="date"
-                  placeholder="Tanggal Lahir"
                   v-model="birthDate"
-                  class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-700 text-base lg:text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
+                  placeholder="Tanggal Lahir"
+                  :type="birthDate ? 'date' : 'text'"
+                  onfocus="this.type = 'date'"
+                  onblur="if (!this.value) this.type = 'text';"
+                  class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-base lg:text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all shadow-sm appearance-none"
+                  :class="!birthDate ? 'text-gray-500' : 'text-gray-700'"
                 />
               </div>
 
