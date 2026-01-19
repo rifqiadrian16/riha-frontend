@@ -72,14 +72,14 @@ onMounted(() => {
   fetchRiwayat();
   fetchRujukan();
 
-  const envUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const BACKEND_URL = "riha-backend-production.up.railway.app";
+  const envUrl = import.meta.env.VITE_API_URL || `${BACKEND_URL}/api`;
 
-  // Hapus '/api' di belakang URL (karena Socket.io harus connect ke Root, bukan ke /api)
   const socketUrl = envUrl.replace("/api", "");
 
   // Inisialisasi Socket dengan URL Dinamis
   socket = io(socketUrl, {
-    transports: ["websocket", "polling"], // Wajib ada agar stabil di Ngrok/Mobile
+    transports: ["websocket", "polling"],
     withCredentials: true,
   });
 
