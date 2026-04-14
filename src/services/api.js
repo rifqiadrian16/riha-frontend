@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const BACKEND_URL = "riha-backend-production.up.railway.app";
-const API_URL = import.meta.env.VITE_API_URL || `${BACKEND_URL}/api`;
+const BACKEND_URL = "https://c4f4-103-157-48-46.ngrok-free.app";
+const API_URL = import.meta.env.VITE_API_URL/api || `${BACKEND_URL}/api`;
 
 const api = axios.create({
   baseURL: API_URL,
