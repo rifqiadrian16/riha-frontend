@@ -20,6 +20,26 @@ const showConfirmPassword = ref(false);
 const agreement = ref(false);
 const isLoaded = ref(false);
 
+const openDatePicker = (event) => {
+  const input = event.target;
+  input.type = "date"; // Ubah menjadi format tanggal
+  
+  // Paksa browser memunculkan pop-up kalender
+  try {
+    if (typeof input.showPicker === 'function') {
+      input.showPicker();
+    }
+  } catch (err) {
+    // Abaikan jika browser lawas tidak mendukung showPicker
+  }
+};
+
+const closeDatePicker = (event) => {
+  if (!event.target.value) {
+    event.target.type = "text"; // Kembalikan ke teks jika batal diisi
+  }
+};
+
 onMounted(() => {
   setTimeout(() => {
     isLoaded.value = true;
@@ -192,21 +212,18 @@ const handleRegister = async () => {
                   class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-700 text-base lg:text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
                 />
               </div>
-              <div class="relative group">
-                <input
-                  type="date"
-                  v-model="birthDate"
-                  required
-                  class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-base lg:text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all shadow-sm appearance-none relative z-10"
-                  :class="!birthDate ? 'text-transparent' : 'text-gray-700'"
-                />
 
-                <span
-                  v-if="!birthDate"
-                  class="absolute left-4 top-3 text-gray-500 text-base lg:text-sm pointer-events-none z-0"
-                >
-                  Tanggal Lahir
-                </span>
+              <div class="group">
+                <input
+                  v-model="birthDate"
+                  type="text"
+                  @focus="openDatePicker"
+                  @click="openDatePicker"
+                  @blur="closeDatePicker"
+                  placeholder="Tanggal Lahir"
+                  required
+                  class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-700 text-base lg:text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
+                />
               </div>
 
               <div class="group relative">
