@@ -6,7 +6,6 @@ import { showAlert, showConfirm } from "../../utils/alert"; // Import Helper
 import Sidebar from "../../components/Sidebar.vue";
 import Header from "../../components/Header.vue";
 
-import { io } from "socket.io-client";
 
 const router = useRouter();
 const isSidebarOpen = ref(false);
@@ -16,7 +15,6 @@ const userRole = ref("");
 // --- STATE DATA ---
 const riwayatAntrean = ref([]);
 const recommendedRS = ref(null);
-let socket = null;
 
 // --- STATE FORM ---
 const form = ref({
@@ -75,22 +73,6 @@ onMounted(() => {
   const BACKEND_URL = "riha-backend-production.up.railway.app";
   const envUrl = import.meta.env.VITE_API_URL || `${BACKEND_URL}/api`;
 
-  const socketUrl = envUrl.replace("/api", "");
-
-  // Inisialisasi Socket dengan URL Dinamis
-  socket = io(socketUrl, {
-    transports: ["websocket", "polling"],
-    withCredentials: true,
-  });
-
-  socket.on("queue_updated", (data) => {
-    console.log("Real-time update:", data.msg);
-    fetchRiwayat();
-  });
-});
-
-onUnmounted(() => {
-  if (socket) socket.disconnect();
 });
 
 // 3. FUNGSI DAFTAR ANTREAN

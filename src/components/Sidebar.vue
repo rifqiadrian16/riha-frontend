@@ -1,11 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { io } from "socket.io-client"; // Import Socket
 import { useRouter, RouterLink } from "vue-router";
 import api from "../services/api"; // Sesuaikan path jika perlu (biasanya ../services/api)
-import { showAlert, showConfirm } from "../utils/alert"; // Sesuaikan path
-let socket = null;
-// Menerima Props dari Parent (Halaman Utama) untuk kontrol Mobile Menu
 const props = defineProps({
   isOpen: {
     type: Boolean,
@@ -41,27 +37,6 @@ onMounted(() => {
   const envUrl =
     import.meta.env.VITE_API_URL ||
     "https://riha-backend-production.up.railway.app";
-
-  const socketUrl = envUrl.replace("/api", "");
-
-  // Inisialisasi Socket dengan URL Dinamis
-  socket = io(socketUrl, {
-    transports: ["websocket", "polling"],
-    withCredentials: true,
-  });
-
-  socket.on("referral_updated", () => {
-    console.log("🔔 TING! Ada rujukan baru masuk via Socket!");
-
-    unreadCount.value += 1;
-
-    checkUnread();
-  });
-});
-
-onUnmounted(() => {
-  // [BARU] Putus koneksi socket saat pindah halaman
-  if (socket) socket.disconnect();
 });
 
 // Fungsi pembantu untuk menutup sidebar saat menu diklik (Mobile)
