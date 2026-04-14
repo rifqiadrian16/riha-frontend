@@ -30,6 +30,9 @@ export default defineConfig({
         short_name: 'RiHa',
         description: 'Sistem Antrean & Rujukan RS Terdekat',
         theme_color: '#ffffff',
+        start_url:'/',
+        display:'standalone',
+        background_color:'#ffffff',
         icons: [
           // ANDA WAJIB MENAMBAHKAN 2 GAMBAR INI NANTI DI FOLDER public/
           {
