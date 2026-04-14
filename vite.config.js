@@ -36,12 +36,12 @@ export default defineConfig({
         icons: [
           // ANDA WAJIB MENAMBAHKAN 2 GAMBAR INI NANTI DI FOLDER public/
           {
-            src: 'pwa-192x192.jpg',
+            src: 'pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.jpg',
+            src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png'
           }
