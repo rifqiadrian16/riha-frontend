@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { useRouter, RouterLink } from "vue-router";
 import api from "../../services/api";
 import { showAlert } from "../../utils/alert";
@@ -19,24 +19,29 @@ const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 const agreement = ref(false);
 const isLoaded = ref(false);
+const inputType = ref("text");
 
-const openDatePicker = (event) => {
-  const input = event.target;
-  input.type = "date"; // Ubah menjadi format tanggal
+const openDatePicker = async (event) => {
+  if (inputType.value === "date") return;
+
+  inputType.value = "date";
   
-  // Paksa browser memunculkan pop-up kalender
+  await nextTick();
+
   try {
-    if (typeof input.showPicker === 'function') {
-      input.showPicker();
+    if (typeof event.target.showPicker === 'function') {
+      event.target.showPicker();
+    } else {
+      event.target.focus(); // Fallback untuk browser HP lawas
     }
   } catch (err) {
-    // Abaikan jika browser lawas tidak mendukung showPicker
+    // Abaikan jika browser tidak mendukung
   }
 };
 
-const closeDatePicker = (event) => {
-  if (!event.target.value) {
-    event.target.type = "text"; // Kembalikan ke teks jika batal diisi
+const closeDatePicker = () => {
+  if (!birthDate.value) {
+    inputType.value = "text";
   }
 };
 
@@ -215,8 +220,9 @@ const handleRegister = async () => {
 
               <div class="group">
                 <input
-                  v-model="birthDate"
-                  type="text"
+                  :type="inputType"
+                  :value="birthDate"
+                  @input="birthDate = $event.target.value"
                   @focus="openDatePicker"
                   @click="openDatePicker"
                   @blur="closeDatePicker"
