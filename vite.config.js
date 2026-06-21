@@ -1,14 +1,22 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 
 export default defineConfig({
   plugins: [
     vue(),
+    ViteImageOptimizer({ 
+      webp: {
+        quality: 80,
+      },
+      png: { quality: 80 },
+      jpeg: { quality: 80 },
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,jpg}'],
         runtimeCaching: [
           {
             // Strategi Caching untuk API Backend (Riset Anda)
