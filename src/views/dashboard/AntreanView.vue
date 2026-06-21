@@ -81,10 +81,11 @@ const handleSubmit = async () => {
     showAlert(
       "Perhatian",
       "Harap pilih Poli Tujuan terlebih dahulu.",
-      "warning",
+      "warning"
     );
     return;
   }
+
   try {
     const response = await api.post("/queue", {
       poli: form.value.poliTujuan,
@@ -92,22 +93,45 @@ const handleSubmit = async () => {
       noHp: form.value.noHp,
       catatan: form.value.catatan,
     });
+
     showAlert(
       "Pendaftaran Berhasil!",
       `Nomor Antrean Anda: ${response.data.nomorAntrean}`,
-      "success",
+      "success"
     );
+
+    // Reset Form
     form.value.poliTujuan = "";
     form.value.namaPasien = "";
     form.value.noHp = "";
     form.value.catatan = "";
+    
+    // Refresh tabel riwayat
+    fetchRiwayat(); 
+
   } catch (error) {
     console.error(error);
-    showAlert(
-      "Gagal Mendaftar",
-      "Terjadi kesalahan sistem atau sesi habis.",
-      "error",
-    );
+    
+    // CEK KONDISI OFFLINE DI SINI
+    if (!navigator.onLine || error.message === 'Network Error') {
+      showAlert(
+        "Anda Sedang Offline",
+        "Sinyal terputus. Data pendaftaran disimpan sementara ke perangkat dan akan otomatis terkirim saat internet kembali stabil.",
+        "info"
+      );
+      
+      // Tetap reset form agar pengguna tidak menekan tombol daftar berkali-kali
+      form.value.poliTujuan = "";
+      form.value.namaPasien = "";
+      form.value.noHp = "";
+      form.value.catatan = "";
+    } else {
+      showAlert(
+        "Gagal Mendaftar",
+        "Terjadi kesalahan sistem atau sesi habis.",
+        "error"
+      );
+    }
   }
 };
 

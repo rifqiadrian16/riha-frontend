@@ -19,7 +19,21 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,jpg}'],
         runtimeCaching: [
           {
-            // Strategi Caching untuk API Backend (Riset Anda)
+            // 1. STRATEGI BACKGROUND SYNC (Khusus untuk POST Data Antrean saat Offline)
+            urlPattern: /^https:\/\/.*\.vercel\.app\/api\/queue/i,
+            handler: 'NetworkOnly',
+            method: 'POST',
+            options: {
+              backgroundSync: {
+                name: 'antrean-offline-queue',
+                options: {
+                  maxRetentionTime: 24 * 60 // Tahan data di IndexedDB maksimal 24 Jam
+                }
+              }
+            }
+          },
+          {
+            // 2. Strategi Caching untuk API Backend (Data Dinamis / GET)
             urlPattern: /^https:\/\/.*\.vercel\.app\/api\/.*/i,
             handler: 'NetworkFirst', // Utamakan network, jika offline pakai cache
             options: {

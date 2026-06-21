@@ -182,7 +182,21 @@ const handleDaftarAntrean = async () => {
     fetchData();
     form.value = { poliTujuan: "", namaPasien: "", noHp: "", catatan: "" };
   } catch (error) {
-    showAlert("Gagal", "Tidak dapat mengambil antrean saat ini.", "error");
+    
+    // --- PERUBAHAN DI SINI ---
+    // Cek apakah error terjadi karena internet mati (Network Error)
+    if (!navigator.onLine || error.message === 'Network Error') {
+      showAlert(
+        "Anda Sedang Offline",
+        "Data pendaftaran disimpan sementara di perangkat dan akan otomatis dikirim ke Puskesmas saat sinyal kembali stabil.",
+        "info"
+      );
+      // Tetap bersihkan form agar tidak di-submit berkali-kali
+      form.value = { poliTujuan: "", namaPasien: "", noHp: "", catatan: "" };
+    } else {
+      // Jika error terjadi karena hal lain (misal server error 500)
+      showAlert("Gagal", "Tidak dapat mengambil antrean saat ini.", "error");
+    }
   }
 };
 
