@@ -5,15 +5,22 @@ const deferredPrompt = ref(null)
 const showInstallBanner = ref(false)
 
 onMounted(() => {
-  // Menangkap event dari browser saat PWA siap diinstal
+  // --- 1. KODE BAWAAN ANDA UNTUK INSTALL PWA ---
   window.addEventListener('beforeinstallprompt', (e) => {
-    // Mencegah browser memunculkan mini-infobar bawaan secara otomatis
     e.preventDefault()
-    // Menyimpan event untuk dipicu nanti
     deferredPrompt.value = e
-    // Menampilkan banner custom kita
     showInstallBanner.value = true
   })
+
+  // --- 2. KODE BARU: DETEKSI INTERNET NYALA (JALUR TOL) ---
+  window.addEventListener('online', () => {
+    // Memberikan jeda 1.5 detik agar sinyal benar-benar stabil
+    setTimeout(() => {
+      // Memaksa halaman refresh secara halus untuk menendang Service Worker
+      // agar segera mengirimkan data dari IndexedDB ke Server
+      window.location.reload();
+    }, 1500);
+  });
 })
 
 const installPWA = async () => {
