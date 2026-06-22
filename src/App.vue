@@ -1,8 +1,29 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import api from "./services/api";
+import { getPendingQueue, removePendingQueue } from "./utils/offlineQueue";
+import { showToast } from "./utils/alert";
 
 const deferredPrompt = ref(null)
 const showInstallBanner = ref(false)
+
+const flushPendingQueue = async () => {
+  const pending = getPendingQueue();
+  if (pending.length === 0) return;
+
+  for (const item of pending) {
+    try {
+      const { _localId, ...payload } = item;
+      await api.post("/queue", payload);
+      removePendingQueue(_localId);
+      showToast(`Antrean ${payload.namaPasien} berhasil disinkronkan`, "success");
+    } catch (err) {
+      // kalau masih gagal (misal masih offline beneran), biarkan tetap di queue
+      console.warn("Gagal sync item, akan dicoba lagi:", err);
+      break; // stop, jangan paksa lanjut ke item berikutnya kalau network masih jelek
+    }
+  }
+};
 
 onMounted(() => {
   // --- 1. KODE BAWAAN ANDA UNTUK INSTALL PWA ---
@@ -14,13 +35,16 @@ onMounted(() => {
 
   // --- 2. KODE BARU: DETEKSI INTERNET NYALA (JALUR TOL) ---
   window.addEventListener('online', () => {
-    // Memberikan jeda 1.5 detik agar sinyal benar-benar stabil
-    setTimeout(() => {
-      // Memaksa halaman refresh secara halus untuk menendang Service Worker
-      // agar segera mengirimkan data dari IndexedDB ke Server
-      window.location.reload();
-    }, 1500);
+    flushPendingQueue();
   });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && navigator.onLine) {
+      flushPendingQueue();
+    }
+  });
+  
+  if (navigator.onLine) flushPendingQueue();
 })
 
 const installPWA = async () => {

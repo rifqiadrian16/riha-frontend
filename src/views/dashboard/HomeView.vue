@@ -5,6 +5,7 @@ import api from "../../services/api";
 import { showAlert, showConfirm } from "../../utils/alert";
 import Sidebar from "../../components/Sidebar.vue";
 import Header from "../../components/Header.vue";
+import { savePendingQueue } from "../../utils/offlineQueue";
 
 const router = useRouter();
 
@@ -186,13 +187,13 @@ const handleDaftarAntrean = async () => {
     // --- PERUBAHAN DI SINI ---
     // Cek apakah error terjadi karena internet mati (Network Error)
     if (!navigator.onLine || error.message === 'Network Error') {
-      showAlert(
-        "Anda Sedang Offline",
-        "Data pendaftaran disimpan sementara di perangkat dan akan otomatis dikirim ke Puskesmas saat sinyal kembali stabil.",
-        "info"
-      );
-      // Tetap bersihkan form agar tidak di-submit berkali-kali
-      form.value = { poliTujuan: "", namaPasien: "", noHp: "", catatan: "" };
+      savePendingQueue({
+        poli: form.value.poliTujuan,
+        namaPasien: currentUser.value,
+        noHp: form.value.noHp,
+        catatan: form.value.catatan,
+      });
+      showAlert("Anda Sedang Offline", "Sinyal terputus. Data pendaftaran disimpan sementara ke perangkat dan akan otomatis terkirim saat internet kembali stabil.", "info");
     } else {
       // Jika error terjadi karena hal lain (misal server error 500)
       showAlert("Gagal", "Tidak dapat mengambil antrean saat ini.", "error");

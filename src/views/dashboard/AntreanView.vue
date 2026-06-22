@@ -5,6 +5,7 @@ import api from "../../services/api";
 import { showAlert, showConfirm } from "../../utils/alert"; // Import Helper
 import Sidebar from "../../components/Sidebar.vue";
 import Header from "../../components/Header.vue";
+import { savePendingQueue } from "../../utils/offlineQueue";
 
 
 const router = useRouter();
@@ -114,17 +115,13 @@ const handleSubmit = async () => {
     
     // CEK KONDISI OFFLINE DI SINI
     if (!navigator.onLine || error.message === 'Network Error') {
-      showAlert(
-        "Anda Sedang Offline",
-        "Sinyal terputus. Data pendaftaran disimpan sementara ke perangkat dan akan otomatis terkirim saat internet kembali stabil.",
-        "info"
-      );
-      
-      // Tetap reset form agar pengguna tidak menekan tombol daftar berkali-kali
-      form.value.poliTujuan = "";
-      form.value.namaPasien = "";
-      form.value.noHp = "";
-      form.value.catatan = "";
+      savePendingQueue({
+        poli: form.value.poliTujuan,
+        namaPasien: form.value.namaPasien,
+        noHp: form.value.noHp,
+        catatan: form.value.catatan,
+      });
+      showAlert("Anda Sedang Offline", "Sinyal terputus. Data pendaftaran disimpan sementara ke perangkat dan akan otomatis terkirim saat internet kembali stabil.", "info");
     } else {
       showAlert(
         "Gagal Mendaftar",
