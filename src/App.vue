@@ -11,64 +11,70 @@ const flushPendingQueue = async () => {
   const pending = getPendingQueue();
   if (pending.length === 0) return;
 
+  // CEK TOKEN: Jangan coba sinkron jika user belum login
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
   for (const item of pending) {
     try {
       const { _localId, ...payload } = item;
+      
+      // Tembak API
       await api.post("/queue", payload);
+      
+      // Jika sukses, hapus dari localStorage
       removePendingQueue(_localId);
       showToast(`Antrean ${payload.namaPasien} berhasil disinkronkan`, "success");
+      
+      // [BARU] Kirim sinyal ke seluruh aplikasi bahwa ada data yang sukses masuk!
+      window.dispatchEvent(new Event('queue-synced'));
+      
     } catch (err) {
-      // kalau masih gagal (misal masih offline beneran), biarkan tetap di queue
       console.warn("Gagal sync item, akan dicoba lagi:", err);
-      break; // stop, jangan paksa lanjut ke item berikutnya kalau network masih jelek
+      break; 
     }
   }
 };
 
 onMounted(() => {
-  // --- 1. KODE BAWAAN ANDA UNTUK INSTALL PWA ---
   window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault()
-    deferredPrompt.value = e
-    showInstallBanner.value = true
-  })
+    e.preventDefault();
+    deferredPrompt.value = e;
+    showInstallBanner.value = true;
+  });
 
-  // --- 2. KODE BARU: DETEKSI INTERNET NYALA (JALUR TOL) ---
+  // Jalankan flush saat sinyal internet nyala
   window.addEventListener('online', () => {
     flushPendingQueue();
   });
 
+  // Jalankan flush saat user membuka/berpindah kembali ke tab aplikasi RiHa
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' && navigator.onLine) {
       flushPendingQueue();
     }
   });
-  
+
+  // Cek antrean saat aplikasi pertama dibuka
   if (navigator.onLine) flushPendingQueue();
-})
+});
 
 const installPWA = async () => {
-  if (!deferredPrompt.value) return
-  
-  // Memunculkan dialog instalasi bawaan browser
-  deferredPrompt.value.prompt()
-  
-  // Menunggu respon pengguna (Apakah klik Instal atau Batal)
-  const { outcome } = await deferredPrompt.value.userChoice
+  if (!deferredPrompt.value) return;
+  deferredPrompt.value.prompt();
+  const { outcome } = await deferredPrompt.value.userChoice;
   if (outcome === 'accepted') {
-    console.log('User menerima instalasi PWA')
-    showInstallBanner.value = false
+    console.log('User menerima instalasi PWA');
+    showInstallBanner.value = false;
   } else {
-    console.log('User menolak instalasi PWA')
+    console.log('User menolak instalasi PWA');
   }
-  
-  // Reset prompt
-  deferredPrompt.value = null
-}
+  deferredPrompt.value = null;
+};
 
 const dismissBanner = () => {
-  showInstallBanner.value = false
-}
+  showInstallBanner.value = false;
+};
 </script>
 
 <template>

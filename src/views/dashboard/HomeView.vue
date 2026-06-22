@@ -148,7 +148,7 @@ onMounted(async () => {
   const savedUser = localStorage.getItem("username");
   if (savedUser) currentUser.value = savedUser;
 
-  await getUserLocation(); // [BARU] Tunggu lokasi dulu
+  await getUserLocation(); // Tunggu lokasi dulu
   fetchData();
   checkUnread();
 
@@ -156,10 +156,16 @@ onMounted(async () => {
     fetchData();
     checkUnread();
   }, 5000); // Ubah jadi 5 detik biar ga terlalu berat
+  
+  // [TAMBAHAN BARU] Tangkap sinyal sukses dari App.vue untuk update instan
+  window.addEventListener('queue-synced', fetchData);
 });
 
 onUnmounted(() => {
   if (pollingInterval) clearInterval(pollingInterval);
+  
+  // [TAMBAHAN BARU] Matikan penangkap sinyal saat pindah halaman
+  window.removeEventListener('queue-synced', fetchData);
 });
 
 // 5. LOGIC DAFTAR ANTREAN

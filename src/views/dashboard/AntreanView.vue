@@ -71,9 +71,13 @@ onMounted(() => {
   fetchRiwayat();
   fetchRujukan();
 
-  const BACKEND_URL = "riha-backend-production.up.railway.app";
-  const envUrl = import.meta.env.VITE_API_URL || `${BACKEND_URL}/api`;
+  // [BARU] Dengarkan sinyal sukses dari App.vue
+  window.addEventListener('queue-synced', fetchRiwayat);
+});
 
+// [BARU] Jangan lupa dimatikan saat komponen ditutup agar tidak membebani memori
+onUnmounted(() => {
+  window.removeEventListener('queue-synced', fetchRiwayat);
 });
 
 // 3. FUNGSI DAFTAR ANTREAN
