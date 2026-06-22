@@ -7,6 +7,11 @@ import Sidebar from "../../components/Sidebar.vue";
 import Header from "../../components/Header.vue";
 import { savePendingQueue } from "../../utils/offlineQueue";
 
+const isOnline = ref(navigator.onLine);
+
+const updateStatus = () => {
+  isOnline.value = navigator.onLine;
+};
 
 const router = useRouter();
 const isSidebarOpen = ref(false);
@@ -73,11 +78,15 @@ onMounted(() => {
 
   // [BARU] Dengarkan sinyal sukses dari App.vue
   window.addEventListener('queue-synced', fetchRiwayat);
+  window.addEventListener('online', updateStatus);
+  window.addEventListener('offline', updateStatus);
 });
 
 // [BARU] Jangan lupa dimatikan saat komponen ditutup agar tidak membebani memori
 onUnmounted(() => {
   window.removeEventListener('queue-synced', fetchRiwayat);
+  window.removeEventListener('online', updateStatus);
+  window.removeEventListener('offline', updateStatus);
 });
 
 // 3. FUNGSI DAFTAR ANTREAN
@@ -171,7 +180,21 @@ const closeSidebar = () => {
           <p class="text-gray-500 text-sm mb-1">
             Dashboard <span class="mx-2">></span> Daftar Antrean
           </p>
-          <h2 class="text-2xl font-bold text-[#1d64f2]">Daftar Antrean</h2>
+          
+          <!-- INI BAGIAN YANG DIUBAH -->
+          <h2 class="text-2xl font-bold text-[#1d64f2] flex items-center gap-3">
+            Daftar Antrean
+            
+            <!-- INDIKATOR REALTIME -->
+            <span v-if="isOnline" class="text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full border border-green-200 flex items-center gap-1.5 shadow-sm transition-all">
+              <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Online
+            </span>
+            <span v-else class="text-xs font-bold bg-red-100 text-red-700 px-3 py-1 rounded-full border border-red-200 flex items-center gap-1.5 shadow-sm transition-all">
+              <span class="w-2 h-2 rounded-full bg-red-500"></span> Offline Mode
+            </span>
+          </h2>
+          <!-- AKHIR BAGIAN YANG DIUBAH -->
+          
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
